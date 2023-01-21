@@ -1,13 +1,28 @@
 import React, { useState, useEffect } from "react";
 
 const Home = () => {
+  
+  // Preparo las variables para ingressar información en el input
   const [entry, setEntry] = useState("");
+
+// Creo un array para recibir la información que ingreso por el input
   const [arrayEntry, setArrayEntry] = useState([]);
 
   console.log(entry);
   console.log(arrayEntry);
 
-  function crearUsuario() {
+  
+  const addToDoToList = () => {
+    setArrayEntry([...arrayEntry, {label: entry, done: false }]);
+    setEntry("");
+  };
+
+  const deleteTask = (deletedTask) => {
+    const filteredArray = arrayEntry.filter((task) => task !== deletedTask);
+    setArrayEntry(filteredArray);
+  };
+
+  function createUser() {
     fetch("https://assets.breatheco.de/apis/fake/todos/user/blancreyes83", {
       method: "POST", // *GET, POST, PUT, DELETE, etc.
       headers: {
@@ -21,7 +36,7 @@ const Home = () => {
       .catch((err) => console.log(err)); //el catch te comunica si algo salió mal
   }
 
-  function getUsuario() {
+  function getUser() {
     fetch("https://assets.breatheco.de/apis/fake/todos/user/blancreyes83", {
       method: "GET", // *GET, POST, PUT, DELETE, etc.
       headers: {
@@ -33,6 +48,8 @@ const Home = () => {
       .then((data) => setArrayEntry(data)) //esta linea guarda la info transformada en un objeto
       .catch((err) => console.log(err)); //el catch te comunica si algo salió mal
   }
+
+  /*Function to Update List of To Dos*/
 
   // function updateToDos() {
   // 	fetch('https://assets.breatheco.de/apis/fake/todos/user/blancreyes83',{
@@ -53,26 +70,42 @@ const Home = () => {
 
   // 	})//busca la info en la url pasada como valor
   // 	.then((response)=>response.json())//esta linea convierte la respuesta en un json
-  // 	.then((data)=>console.log(data))//esta linea guarda la info transformada en un objeto
+  // 	.then((data)=>getUser())//esta linea guarda la info transformada en un objeto
+  // 	.catch((err)=>console.log(err))//el catch te comunica si algo salió mal
+  // }
+
+  /*Function to Delete List of To Dos*/
+
+   // function deleteToDos() {
+  // 	fetch('https://assets.breatheco.de/apis/fake/todos/user/blancreyes83',{
+  // 		method: 'DELETE', // *GET, POST, PUT, DELETE, etc.
+  // 		headers: {
+  // 			'Content-Type': 'application/json'
+  // 			// 'Content-Type': 'application/x-www-form-urlencoded',
+
+  // 	},
+
+  // 	BODY: JSON.stringify(
+  // 		[
+  // 			{ label: "Make the bed", done: false },
+  // 			{ label: "Walk the dog", done: false },
+  // 			{ label: "Do the replits", done: false }
+  // 		]
+  // 	)
+
+  // 	})//busca la info en la url pasada como valor
+  // 	.then((response)=>response.json())//esta linea convierte la respuesta en un json
+  // 	.then((data)=>getUser())//esta linea guarda la info transformada en un objeto
   // 	.catch((err)=>console.log(err))//el catch te comunica si algo salió mal
   // }
 
   useEffect(() => {
     //forma 1
-    getUsuario();
+    getUser();
     //bloque de codigo que queremos
     console.log("Me estoy ejecutando porque ya cargó el componente");
   }, []); // cuando el array esta vacio
 
-  const addToDoToList = () => {
-    setArrayEntry([...arrayEntry, {label: entry, done: false }]);
-    setEntry("");
-  };
-
-  const deleteTask = (deletedTask) => {
-    const diminishedArray = arrayEntry.filter((task) => task !== deletedTask);
-    setArrayEntry(diminishedArray);
-  };
 
   return (
     <>
