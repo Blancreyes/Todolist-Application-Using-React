@@ -14,6 +14,7 @@ const Home = () => {
   
   const addToDoToList = () => {
     setArrayEntry([...arrayEntry, {label: entry, done: false }]);
+    // setArrayEntry(arrayEntry?.concat({label: entry, done: false }));
     setEntry("");
     // updateToDos();
   };
@@ -73,7 +74,8 @@ const Home = () => {
   	})//busca la info en la url pasada como valor
   	.then((response)=>response.json())//esta linea convierte la respuesta en un json
   	// .then((data)=>getUser())//esta linea guarda la info transformada en un objeto
-    .then((data)=>setArrayEntry(data))
+    // .then(()=>setArrayEntry()
+    .then((data)=>console.log(data))
   	.catch((err)=>console.log(err))//el catch te comunica si algo salió mal
   }
 
@@ -98,11 +100,13 @@ const Home = () => {
     console.log("Me estoy ejecutando porque ya cargó el componente");
   }, []); // cuando el array esta vacio
 
-  // useEffect(() => {
-  //       //forma 2
-  //   updateToDos();
-   
-  // }, [arrayEntry]); // cuando en el array ocurre cualquier cambio
+  useEffect(() => {
+    
+    if (arrayEntry.length > 0) {
+       updateToDos();
+    }
+      
+  }, [arrayEntry]); // cuando en el array ocurre cualquier cambio
 
 
   return (
