@@ -15,6 +15,7 @@ const Home = () => {
   const addToDoToList = () => {
     setArrayEntry([...arrayEntry, {label: entry, done: false }]);
     setEntry("");
+    // updateToDos();
   };
 
   const deleteTask = (deletedTask) => {
@@ -32,79 +33,76 @@ const Home = () => {
       body: JSON.stringify([]), // body data type must match "Content-Type" header
     }) //busca la info en la url pasada como valor
       .then((response) => response.json()) //esta linea convierte la respuesta en un json
-      .then((data) => console.log(data)) //esta linea guarda la info transformada en un objeto
+      .then((data) => {
+        
+      if (data.result === "ok") {getUser()}
+
+        console.log(data)}) //esta linea guarda la info transformada en un objeto
       .catch((err) => console.log(err)); //el catch te comunica si algo salió mal
   }
 
   function getUser() {
     fetch("https://assets.breatheco.de/apis/fake/todos/user/blancreyes83", {
       method: "GET", // *GET, POST, PUT, DELETE, etc.
-      headers: {
-        "Content-Type": "application/json",
-        // 'Content-Type': 'application/x-www-form-urlencoded',
-      },
+      
     }) //busca la info en la url pasada como valor
-      .then((response) => response.json()) //esta linea convierte la respuesta en un json
+      .then((response) => {
+       console.log(response.status); 
+
+      if (response.status === 404) {createUser()} 
+
+        
+        return response.json()}) //esta linea convierte la respuesta en un json
       .then((data) => setArrayEntry(data)) //esta linea guarda la info transformada en un objeto
       .catch((err) => console.log(err)); //el catch te comunica si algo salió mal
   }
 
   /*Function to Update List of To Dos*/
 
-  // function updateToDos() {
-  // 	fetch('https://assets.breatheco.de/apis/fake/todos/user/blancreyes83',{
-  // 		method: 'PUT', // *GET, POST, PUT, DELETE, etc.
-  // 		headers: {
-  // 			'Content-Type': 'application/json'
-  // 			// 'Content-Type': 'application/x-www-form-urlencoded',
+   function updateToDos() {
+   	fetch('https://assets.breatheco.de/apis/fake/todos/user/blancreyes83',{
+   		method: 'PUT', // *GET, POST, PUT, DELETE, etc.
+   		headers: {
+   			'Content-Type': 'application/json'
+   			// 'Content-Type': 'application/x-www-form-urlencoded',
 
-  // 	},
+   	},
 
-  // 	BODY: JSON.stringify(
-  // 		[
-  // 			{ label: "Make the bed", done: false },
-  // 			{ label: "Walk the dog", done: false },
-  // 			{ label: "Do the replits", done: false }
-  // 		]
-  // 	)
+   	body: JSON.stringify(arrayEntry)
 
-  // 	})//busca la info en la url pasada como valor
-  // 	.then((response)=>response.json())//esta linea convierte la respuesta en un json
-  // 	.then((data)=>getUser())//esta linea guarda la info transformada en un objeto
-  // 	.catch((err)=>console.log(err))//el catch te comunica si algo salió mal
-  // }
+  	})//busca la info en la url pasada como valor
+  	.then((response)=>response.json())//esta linea convierte la respuesta en un json
+  	// .then((data)=>getUser())//esta linea guarda la info transformada en un objeto
+    .then((data)=>setArrayEntry(data))
+  	.catch((err)=>console.log(err))//el catch te comunica si algo salió mal
+  }
 
-  /*Function to Delete List of To Dos*/
+  // function to Delete List of To Dos
 
-   // function deleteToDos() {
-  // 	fetch('https://assets.breatheco.de/apis/fake/todos/user/blancreyes83',{
-  // 		method: 'DELETE', // *GET, POST, PUT, DELETE, etc.
-  // 		headers: {
-  // 			'Content-Type': 'application/json'
-  // 			// 'Content-Type': 'application/x-www-form-urlencoded',
-
-  // 	},
-
-  // 	BODY: JSON.stringify(
-  // 		[
-  // 			{ label: "Make the bed", done: false },
-  // 			{ label: "Walk the dog", done: false },
-  // 			{ label: "Do the replits", done: false }
-  // 		]
-  // 	)
-
-  // 	})//busca la info en la url pasada como valor
-  // 	.then((response)=>response.json())//esta linea convierte la respuesta en un json
-  // 	.then((data)=>getUser())//esta linea guarda la info transformada en un objeto
-  // 	.catch((err)=>console.log(err))//el catch te comunica si algo salió mal
-  // }
+   function deleteToDos() {
+    fetch('https://assets.breatheco.de/apis/fake/todos/user/blancreyes83',{
+      method: 'DELETE', // *GET, POST, PUT, DELETE, etc.
+      
+   })
+   	.then((response)=>response.json())//esta linea convierte la respuesta en un json
+   	.then((data) => console.log(data)) //esta linea guarda la info transformada en un objeto
+   	.catch((err)=>console.log(err))//el catch te comunica si algo salió mal
+   }
 
   useEffect(() => {
-    //forma 1
+    
     getUser();
+    //forma 1
+    
     //bloque de codigo que queremos
     console.log("Me estoy ejecutando porque ya cargó el componente");
   }, []); // cuando el array esta vacio
+
+  // useEffect(() => {
+  //       //forma 2
+  //   updateToDos();
+   
+  // }, [arrayEntry]); // cuando en el array ocurre cualquier cambio
 
 
   return (
@@ -132,20 +130,31 @@ const Home = () => {
 
         <div>
           <ul class="list-group list-group-numbered">
-            {arrayEntry.map((task, index) => (
-              <li key={index} class="list-group-item d-flex">
-                <span style={{ width: "90%" }}>{task.label}</span>
-                <button
-                  class="text-align-right"
-                  onClick={() => deleteTask(task)}
-                >
-                  Delete
-                </button>
-              </li>
-            ))}
+            {arrayEntry.length > 0?         
+              arrayEntry.map((task, index) => (
+                <li key={index} class="list-group-item d-flex">
+                  <span style={{ width: "90%" }}>{task.label}</span>
+                  <button
+                    class="text-align-right"
+                    onClick={() => deleteTask(task)}
+                  >
+                    Delete
+                  </button>
+                </li>
+            )): null }
           </ul>
         </div>
       </div>
+
+      <div class="grid text-center my-2">
+        <button
+          class="col-2"
+          onClick={() => deleteToDos()}
+        >
+          Clear All
+        </button>
+      </div>
+     
     </>
   );
 };
